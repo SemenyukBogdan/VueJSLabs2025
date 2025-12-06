@@ -1,5 +1,7 @@
-<script lang="ts">
+<script setup lang="ts">
 import { v4 as uuid } from 'uuid'
+import { computed, onMounted, ref, watch } from 'vue'
+
 type Priority = 'low' | 'medium' | 'high'
 
 type Task = {
@@ -12,129 +14,109 @@ type Task = {
   priority: Priority
 }
 
-export default {
 
-  data() {
-    return {
-      list: [] as Task[],
-      newTaskTitle: '',
-      newTaskDecription: '',
-      newTaskPriority: 'medium' as Priority,
+const STORAGE_KEY = 'tasks'
 
-      fTitle: '',
-      fDescription: '',
-      fIsComplete: null ,      // all | active | done
-      fPriority: 'all',    // all | low | medium | high
-      fFrom: '',           // 'YYYY-MM-DD'
-      fTo: '',             // 'YYYY-MM-DD'
+const list = ref<Task[]>([])
 
-    }
+const newTaskTitle = ref('')
+const newTaskDescription = ref('')
+const newTaskPriority = ref<Priority>('medium')
+
+const fTitle = ref('')
+const fDescription = ref('')
+const fIsComplete = ref<null | boolean>(null) // null = All, false = Active, true = Done
+const fPriority = ref<'all' | Priority>('all')
+const fFrom = ref('') // YYYY-MM-DD
+const fTo = ref('')   // YYYY-MM-DD
+
+onMounted(() => {
+  const saved = localStorage.getItem(STORAGE_KEY)
+  if (!saved) return
+
+  const parsed = JSON.parse(saved) as Array<Omit<Task, 'createdAt'> & { createdAt: string }>
+  list.value = parsed.map(t => ({
+    ...t,
+    createdAt: t.createdAt ? new Date(t.createdAt) : new Date(),
+  }))
+})
+
+watch(
+  list,
+  (newList) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newList))
   },
-  watch: {
-    list: {
-      deep: true,
-      handler(newList: any) {
-        localStorage.setItem('tasks', JSON.stringify(newList))
-      }
-    }
-  },
-  methods: {
-    createTask() {
-      this.newTaskTitle = this.newTaskTitle.trim()
-      this.newTaskDecription = this.newTaskDecription.trim()
+  { deep: true }
+)
 
-      if (this.newTaskTitle=== '') {
-        return
-      }
-      if (this.newTaskDecription === '') {
-        return
-      }
+const total = computed(() => list.value.length)
+const active = computed(() => list.value.filter(t => !t.isComplete).length)
+const completed = computed(() => list.value.filter(t => t.isComplete).length)
 
-      const newId = uuid();
-      this.list.push({
-        id: newId,
-        title: this.newTaskTitle,
-        description: this.newTaskDecription,
-        isComplete: false,
-        editMode: false,
-        createdAt: new Date(),
-        priority: this.newTaskPriority,
-      })
+const filteredList = computed(() => {
+  const titleQ = fTitle.value.trim().toLowerCase()
+  const descQ = fDescription.value.trim().toLowerCase()
 
-      // this.newTaskTitle = ''
-      // this.newTaskText = ''
-    },
-    removeTask(id: string) {
-      this.list = this.list.filter(task => task.id !== id)
-    },
-    editTask(id: string) {
-      const task = this.list.find(task => task.id === id)
-      if (task?.editMode != undefined) {
-        task.editMode = true;
-      }
-    },
-    saveTask(id: string) {
-      const task = this.list.find(task => task.id === id)
-      if (task?.editMode != undefined) {
-        task.editMode = false;
-      }
-    },
-    clearFilters(){
-      this.fTitle = '',
-          this.fDescription= '',
-          this.fIsComplete= null ,      // all | active | done
-          this.fPriority= 'all',    // all | low | medium | high
-          this.fFrom= '',           // 'YYYY-MM-DD'
-          this.fTo= ''             // 'YYYY-MM-DD'
-    }
+  const from = fFrom.value ? new Date(fFrom.value + 'T00:00:00') : null
+  const to = fTo.value ? new Date(fTo.value + 'T23:59:59') : null
 
-  },
-  computed: {
-    total() {
-      return this.list.length
-    },
-    active() {
-      return this.list.filter(task => !task.isComplete).length
-    },
-    completed() {
-      return this.list.filter(task => task.isComplete).length
-    },
-    filteredList() {
-      const titleQ = this.fTitle.trim().toLowerCase()
-      const descQ = this.fDescription.trim().toLowerCase()
+  return list.value.filter(t => {
+    const okTitle = !titleQ || t.title.toLowerCase().includes(titleQ)
+    const okDesc = !descQ || t.description.toLowerCase().includes(descQ)
 
-      const from = this.fFrom ? new Date(this.fFrom + 'T00:00:00') : null
-      const to = this.fTo ? new Date(this.fTo + 'T23:59:59') : null
+    const okStatus = fIsComplete.value === null || t.isComplete === fIsComplete.value
+    const okPriority = fPriority.value === 'all' || t.priority === fPriority.value
 
-      return this.list.filter((t: any) => {
-        const okTitle = !titleQ || (t.title ?? '').toLowerCase().includes(titleQ)
-        const okDesc = !descQ || (t.description ?? '').toLowerCase().includes(descQ)
+    const created = t.createdAt
+    const okFrom = !from || created >= from
+    const okTo = !to || created <= to
 
-        const okIsComplete = this.fIsComplete === null || t.isComplete === this.fIsComplete
-        const okPriority = this.fPriority === 'all' || t.priority === this.fPriority
+    return okTitle && okDesc && okStatus && okPriority && okFrom && okTo
+  })
+})
 
-        const created = t.createdAt instanceof Date ? t.createdAt : new Date(t.createdAt)
-        const okFrom = !from || created >= from
-        const okTo = !to || created <= to
 
-        return okTitle && okDesc && okIsComplete && okPriority && okFrom && okTo
-      })
-    },
+function createTask() {
+  const title = newTaskTitle.value.trim()
+  const description = newTaskDescription.value.trim()
+  if (!title || !description) return
 
-  },
+  list.value.push({
+    id: uuid(),
+    title,
+    description,
+    isComplete: false,
+    editMode: false,
+    createdAt: new Date(),
+    priority: newTaskPriority.value,
+  })
 
-  created() {
-    const saved = localStorage.getItem('tasks')
-    if (saved) {
-      const parsed = JSON.parse(saved)
+  newTaskTitle.value = ''
+  newTaskDescription.value = ''
+  newTaskPriority.value = 'medium'
+}
 
-      this.list = parsed.map((t: any) => ({
-        ...t,
-        createdAt: t.createdAt ? new Date(t.createdAt) : new Date()
-      }))
-    }
+function removeTask(id: string) {
+  list.value = list.value.filter(task => task.id !== id)
+}
 
-  }
+function editTask(id: string) {
+  const task = list.value.find(task => task.id === id)
+  if (task) task.editMode = true
+}
+
+function saveTask(id: string) {
+  const task = list.value.find(task => task.id === id)
+  if (task) task.editMode = false
+}
+
+function clearFilters() {
+  fTitle.value = ''
+  fDescription.value = ''
+  fIsComplete.value = null
+  fPriority.value = 'all'
+  fFrom.value = ''
+  fTo.value = ''
 }
 
 </script>
@@ -176,7 +158,7 @@ export default {
   <div class="new_task">
     <h4>New task</h4>
     <input v-model="newTaskTitle" type="text" placeholder="title" >
-    <input v-model="newTaskDecription" type="text" placeholder="text">
+    <input v-model="newTaskDescription" type="text" placeholder="Description">
     <select v-model="newTaskPriority">
       <option value="low">Low</option>
       <option value="medium" selected>Medium</option>
