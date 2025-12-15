@@ -1,27 +1,3 @@
-# lab2
-
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
 
 ## Project Setup
 
@@ -35,8 +11,149 @@ npm install
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
 
-```sh
-npm run build
+короткий опис де застосовані
+props/emits,
+
+Props застосовані в компоненті Login.vue
+```
+      <BaseInput v-model="form.email" label="Email" :error="errors.email"/>
+      <BaseInput v-model="form.password" label="Password" type="password" :error="errors.password"/>
+
+```
+Через директиву v-model в дочірній компонент передається змінна form.email
+
+Emits застосовані в компоненті baseInput.vue:
+```
+const emit = defineEmits<{ (e: "update:modelValue", v: string): void }>()
+```
+Визначаю подію на переменну emit.
+
+v-model/defineModel,
+
+provide/inject,
+Використано provide в компоненті App.vue
+```
+provide("isAuthKey", isAuth)
+```
+
+Використано inject в Login.vue 
+```
+const isAuth = inject("isAuthKey") as Ref<boolean>
+```
+
+
+слоти використані в компоненті ReportsTable
+```
+<template>
+  <table>
+    <tbody>
+    <tr v-for="item in items" :key="item.id">
+      <slot name="row" :item="item">
+
+      </slot>
+    </tr>
+    </tbody>
+  </table>
+</template>
+```
+
+Використано KeepAlive в '@/views/admin/Dashboard'
+```
+<template>
+  <div class="demo">
+    <label><input type="radio" v-model="current" :value="CompA" /> A</label>
+    <label><input type="radio" v-model="current" :value="CompB" /> B</label>
+    <KeepAlive include="CompA" exclude="CompB" :max="2">
+      <component :is="current"></component>
+    </KeepAlive>
+  </div>
+</template>
+```
+
+
+
+Виконано роутинг (default + named toolbar, lazy-loading, guard’и).
+в файлі '@/src/router/index.ts'
+```
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: "/",
+        name: "home",
+      component: () => import("../views/Home.vue"),
+      meta: { public: true },
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: () => import("../views/Login.vue"),
+      meta: { public: true },
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: () => import("../views/Register.vue"),
+      meta: { public: true },
+    },
+
+    {
+      path: "/admin",
+      name: "admin",
+      component: () => import("../views/admin/AdminLayout.vue"),
+      meta: { requiresAuth: true },
+      redirect: "/admin/dashboard",
+      children: [
+        {
+          path: "dashboard",
+          name: "admin-dashboard",
+          component: () => import("../views/admin/Dashboard.vue"), // lazy-loaded
+          meta: { requiresAuth: true },
+        },
+        {
+          path: "users",
+          name: "admin-users",
+          component: () => import("../views/admin/Users.vue"), // lazy-loaded
+          meta: { requiresAuth: true },
+        },
+        {
+          path: "user/:id",
+          name: "admin-user",
+          component: () => import("../views/admin/UserDetails.vue"), // lazy-loaded
+          meta: { requiresAuth: true },
+          props: true,
+        },
+        {
+          path: "reports",
+          name: "admin-reports",
+          component: () => import("../views/admin/Reports.vue"), // lazy-loaded
+          meta: { requiresAuth: true },
+        },
+      ],
+    },
+
+    // catch-all
+    {
+      path: "/:pathMatch(.*)*",
+      name: "not-found",
+      component: () => import("../views/NotFound.vue"),
+    },
+  ],
+
+  scrollBehavior() {
+    return { top: 0 };
+  },
+
+  linkActiveClass: "active-link",
+});
+
+
+
+
+router.beforeEach((to) => {
+  if (to.meta.requiresAuth && !isAuthed()) {
+    return { name: "login", query: { redirect: to.fullPath } }
+  }
+})
 ```
