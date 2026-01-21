@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "products": "Товари",
+    "cart": "Кошик",
+    "profile": "Профіль",
+    "settings": "Налаштування"
+  },
+  "common": {
+    "language": "Мова",
+    "add": "Додати",
+    "remove": "Видалити",
+    "clear": "Очистити",
+    "save": "Зберегти",
+    "reset": "Скинути",
+    "total": "Разом"
+  },
+  "settings": {
+    "currentLanguage": "Поточна мова"
+  },
+  "cart": {
+    "empty": "Кошик порожній",
+    "itemsInCart": "Товарів у кошику",
+    "quantity": "Кількість",
+    "itemTotal": "Сума",
+    "totalItems": "Всього товарів"
+  },
+  "products": {
+    "title": "Товари",
+    "empty": "Товари відсутні"
+  },
+  "profile": {
+    "title": "Профіль",
+    "name": "Ім'я",
+    "email": "Email",
+    "dateOfBirth": "Дата народження",
+    "address": "Адреса",
+    "phones": "Телефони",
+    "addPhone": "Додати телефон",
+    "phonePlaceholder": "Введіть номер телефону",
+    "serverErrorExample": "Емуляція серверної помилки",
+    "successMessage": "Профіль успішно збережено!"
+  },
+  "errors": {
+    "required": "Поле є обов'язковим",
+    "email": "Некоректний email",
+    "min": "Мінімум {min} символи",
+    "phone": "Некоректний номер телефону",
+    "date": "Некоректна дата",
+    "serverError": "Помилка сервера: цей email вже зайнятий"
+  },
+  "demo": {
+    "upperExample": "тест upper",
+    "snakeExample": "my_profile_settings"
+  }
+}
