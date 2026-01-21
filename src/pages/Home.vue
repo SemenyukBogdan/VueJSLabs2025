@@ -13,25 +13,28 @@ const card = {
 </script>
 
 <template>
-
-<!--      Основний блок (контент)-->
-      <ArticleCard
-        v-for="a in articles"
-        :key="a.id"
-        class="card"
-        :article="a"
-      />
-
+  <div class="home">
+    <ArticleCard
+      v-for="a in articles"
+      :key="a.id"
+      class="card"
+      :article="a"
+    />
+  </div>
 </template>
 
 <style scoped>
+.home {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
 
 .card {
-  flex: 0 0 calc(25% - 2%);
-  max-width: calc(25% - 2%);
+  width: 100%;
+  margin: 0;
   box-sizing: border-box;
-  margin: 1%;
-  overflow: hidden;
-
 }
+
 </style>

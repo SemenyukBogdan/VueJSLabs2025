@@ -33,7 +33,12 @@ const openAdModal = () => {
     </div>
 
     <main class="main pl-2 pr-2">
-      <RouterView />
+      <RouterView v-slot="{ Component, route }">
+        <Transition name="page" mode="out-in">
+          <component :is="Component" :key="route.fullPath" />
+        </Transition>
+      </RouterView>
+
     </main>
 
     <div class="right-side-ad">
@@ -52,16 +57,27 @@ const openAdModal = () => {
 
 <style scoped>
 
-.layout{
-  margin-left: 1%;
-  margin-right: 1%;
-  display: flex;
-  justify-content: space-between;
+.layout {
+  margin: 0 1%;
+  display: grid;
+  grid-template-columns: 140px 1fr 140px; /* фіксуємо бокові колонки */
+  gap: 16px;
+  align-items: flex-start;
 }
-.main{
-  background-color: #f9f9f9;
-  flex-wrap: wrap;
+
+.left-side-ad,
+.right-side-ad {
   display: flex;
-  width: 80%;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0;
 }
+
+.main {
+  min-width: 0;
+  background: transparent; /* прибери підкладку, якщо не потрібна */
+  padding: 0;
+}
+
+
 </style>

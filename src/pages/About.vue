@@ -3,7 +3,9 @@
 </script>
 
 <template>
-about
+  <div class="about">
+    about
+  </div>
 </template>
 
 <style scoped>

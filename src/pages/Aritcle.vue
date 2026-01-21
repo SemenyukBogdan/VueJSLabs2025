@@ -31,4 +31,30 @@ const article = articles.find((a) => a.id === idNum)
   </article>
 </template>
 
-<style scoped></style>
+<style scoped>
+.article-page {
+  max-width: 960px;   /* або 900–1100px, як зручно */
+  margin: 0 auto;     /* центр по горизонталі */
+  padding: 24px 16px;
+}
+
+.article-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.article-media {
+  margin: 20px 0;
+}
+
+.article-image {
+  max-height: 600px;
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 10px;
+}
+</style>

@@ -7,6 +7,14 @@ onMounted(() => {
   isDark.value = localStorage.getItem("theme") === "dark"
 })
 
+const applyTheme = (dark: boolean) => {
+  document.documentElement.classList.toggle("dark", dark)
+}
+
+watch(isDark, (val) => {
+  localStorage.setItem("theme", val ? "dark" : "light")
+  applyTheme(val)
+})
 
 const accent = computed(() => (isDark.value ? "#4aa3ff" : "#22c55e"))
 
