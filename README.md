@@ -1,42 +1,61 @@
-# lab3
+# Lab3 — Стилізація компонентів у Vue.js
 
-This template should help get you started developing with Vue 3 in Vite.
+## Опис
+Міні-сайт новин: головна зі списком статей, сторінка детальної статті, сторінка About, рекламні слоти з модалкою, перемикач теми, анімації переходів між сторінками.
 
-## Recommended IDE Setup
+## Стек
+- Vue 3 (Composition API), Vite
+- Vue Router 4
+- Tailwind CSS v4 (через `@import "tailwindcss"`)
+- TypeScript
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Вимоги, що реалізовані
+- Маршрути: `/`, `/article/:id`, `/about` (+ модалка через Teleport)
+- Список новин з локального масиву
+- Картка новини: заголовок, опис, дата, зображення, кнопка переходу
+- Детальна стаття: заголовок, дата, зображення, контент
+- Реклама: 2 статичні AdSlot у лейауті + модалка (Teleport, кнопка закриття, анімація)
+- Перемикач теми: стан у `localStorage`, клас `dark` на `<html>`
+- Анімації переходів сторінок: `<Transition name="page" mode="out-in">` для `<RouterView>`, глобальні `.page-*` класи
 
-## Recommended Browser Setup
+## Запуск
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```
 npm install
+npm run dev # локальний дев-сервер
+npm run build # прод-збірка
+npm run preview # перегляд прод-збірки
 ```
 
-### Compile and Hot-Reload for Development
 
-```sh
-npm run dev
-```
+## Структура (скорочено)
+- `src/main.ts` — вхід
+- `src/router` — маршрути
+- `src/pages` — Home / Article / About / NotFound
+- `src/components` — Header, Footer, ArticleCard, AdSlot, AdModal тощо
+- `src/data/articles.ts` — локальні дані
 
-### Type-Check, Compile and Minify for Production
+## Скріншоти
+![Home page](/docs/screenshots/DarkThemeHome.png)- Головна зі списком
 
-```sh
-npm run build
-```
+-Детальна стаття
+![Article](/docs/screenshots/Articl%20dark.png) 
+
+- Модальне вікно
+![Ad modal](/docs/screenshots/Admodal%20light.png)
+
+**Dark/Light тема**
+
+- Головна зі списком
+  ![Home page](/docs/screenshots/LightThemeHome.png)
+-Головна зі списком (Темна)
+  ![Home page](/docs/screenshots/DarkThemeHome.png)
+
+## Особливості стилізації у Vue.js (висновок)
+- `<style scoped>` ізольовує стилі компонента без конфліктів класів.
+- CSS Modules дають локальні імена класів у `.module.css/.module.scss`.
+- `v-bind()` у CSS дозволяє підставляти реактивні значення (наприклад, кольори теми).
+- Для анімацій переходів використовуються класи `v-enter-* / v-leave-*` і `<Transition>`; для RouterView — слот із `name="page"`.
+- Teleport виносить модалки в `<body>`, уникаючи проблем із `z-index` і `overflow`.
+- Тема зберігається у `localStorage`, клас `dark` ставиться на `<html>`; змінні CSS керують кольорами.
+

@@ -16,19 +16,20 @@
 
 :root {
     --bg: #ffffff;
-    --text: #111827;
-}
-:root.dark {
-    --bg: #0b1220;
-    --text: #e5e7eb;
+    --text: #0f172a;
+    --card-bg: #ffffff;
 }
 
-body {
+:root.dark {
+    --bg: #0b1220;
+    --text: #e2e8f0;
+    --card-bg: #111827;
+}
+
+html, body {
     background: var(--bg);
     color: var(--text);
 }
-
-/* Приклад для карток/контейнерів, щоб було видно зміну */
 .card {
     background: #fff;
     color: #111827;
@@ -39,6 +40,11 @@ body {
 }
 
 :root.dark .home {
+    background: #0b1220;
+    color: #e5e7eb;
+}
+
+:root.dark .main {
     background: #0b1220;
     color: #e5e7eb;
 }

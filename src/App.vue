@@ -56,11 +56,10 @@ const openAdModal = () => {
 </template>
 
 <style scoped>
-
 .layout {
   margin: 0 1%;
   display: grid;
-  grid-template-columns: 140px 1fr 140px; /* фіксуємо бокові колонки */
+  grid-template-columns: 140px 1fr 140px;
   gap: 16px;
   align-items: flex-start;
 }
@@ -75,9 +74,7 @@ const openAdModal = () => {
 
 .main {
   min-width: 0;
-  background: transparent; /* прибери підкладку, якщо не потрібна */
   padding: 0;
+  background: transparent; /* прибираємо світлу підкладку */
 }
-
-
 </style>

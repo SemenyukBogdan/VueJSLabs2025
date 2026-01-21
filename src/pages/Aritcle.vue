@@ -33,28 +33,31 @@ const article = articles.find((a) => a.id === idNum)
 
 <style scoped>
 .article-page {
-  max-width: 960px;   /* або 900–1100px, як зручно */
-  margin: 0 auto;     /* центр по горизонталі */
+  max-width: 960px;
+  margin: 0 auto;
   padding: 24px 16px;
+  color: var(--text);
 }
 
 .article-card {
-  background: #fff;
+  background: var(--card-bg);
+  color: var(--text);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.article-media {
-  margin: 20px 0;
-}
+.article-media { margin: 16px 0; }
 
 .article-image {
-  max-height: 600px;
   width: 100%;
   height: auto;
   display: block;
   object-fit: cover;
   border-radius: 10px;
+}
+
+.article-content,
+.article-text {
+  color: var(--text);
 }
 </style>
