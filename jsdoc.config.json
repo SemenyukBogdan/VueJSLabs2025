@@ -1,0 +1,11 @@
+{
+  "source": {
+    "include": ["server/"],
+    "includePattern": ".+\\.cjs$"
+  },
+  "opts": {
+    "destination": "./docs/generated",
+    "recurse": true
+  },
+  "plugins": ["plugins/markdown"]
+}
